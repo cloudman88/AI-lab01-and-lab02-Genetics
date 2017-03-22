@@ -1,0 +1,67 @@
+Best: iwwjs%[BuE_" (194), Average: 422.80, Standard Deviation: 79.87
+Best: e_\jk#xoXfA$ (131), Average: 357.52, Standard Deviation: 61.65
+Best: NOgpt&wGmvf! (105), Average: 305.32, Standard Deviation: 54.72
+Best: NOgpt&wehmb0 (86), Average: 261.07, Standard Deviation: 51.38
+Best: NOgpt&wehmb0 (86), Average: 222.02, Standard Deviation: 47.65
+Best: Raidr%wpbjp$ (67), Average: 187.26, Standard Deviation: 44.02
+Best: Q_\jk#xomvf! (58), Average: 155.63, Standard Deviation: 39.21
+Best: Iekbt&wowkd! (29), Average: 130.26, Standard Deviation: 34.74
+Best: Iekbt&wowkd! (29), Average: 107.96, Standard Deviation: 30.25
+Best: Iekbt&wowkd! (29), Average: 89.99, Standard Deviation: 28.05
+Best: Legjk#wonlf$ (27), Average: 76.11, Standard Deviation: 26.08
+Best: Lemjk#xonkf! (22), Average: 65.37, Standard Deviation: 25.34
+Best: Iekjk#xotle! (15), Average: 55.36, Standard Deviation: 24.14
+Best: Ieklq wjsle! (11), Average: 47.35, Standard Deviation: 23.19
+Best: Ieklq woukd! (8), Average: 41.10, Standard Deviation: 22.97
+Best: Ieklq woukd! (8), Average: 34.99, Standard Deviation: 20.81
+Best: Ieklq woukd! (8), Average: 32.10, Standard Deviation: 22.21
+Best: Ieklq wotle! (7), Average: 29.11, Standard Deviation: 22.14
+Best: Ieklq wosle! (6), Average: 26.17, Standard Deviation: 22.23
+Best: Ieklq wosle! (6), Average: 24.00, Standard Deviation: 22.76
+Best: Ieklq wosld! (5), Average: 21.14, Standard Deviation: 21.78
+Best: Ieklq wosld! (5), Average: 19.53, Standard Deviation: 22.69
+Best: Ieklq wosld! (5), Average: 18.94, Standard Deviation: 23.01
+Best: Ieklo woqmd! (4), Average: 17.07, Standard Deviation: 22.32
+Best: Ieklo woqmd! (4), Average: 16.97, Standard Deviation: 22.72
+Best: Ieklo wosld! (3), Average: 16.00, Standard Deviation: 22.23
+Best: Ieklo wosld! (3), Average: 15.44, Standard Deviation: 22.57
+Best: Ieklo wosld! (3), Average: 14.81, Standard Deviation: 22.27
+Best: Ieklo wosld! (3), Average: 14.33, Standard Deviation: 21.87
+Best: Ieklo world! (2), Average: 14.09, Standard Deviation: 22.47
+Best: Ieklo world! (2), Average: 13.14, Standard Deviation: 21.98
+Best: Ieklo world! (2), Average: 12.13, Standard Deviation: 21.23
+Best: Ieklo world! (2), Average: 13.06, Standard Deviation: 22.48
+Best: Ieklo world! (2), Average: 12.67, Standard Deviation: 22.02
+Best: Ieklo world! (2), Average: 11.99, Standard Deviation: 21.42
+Best: Ieklo world! (2), Average: 12.60, Standard Deviation: 22.52
+Best: Ieklo world! (2), Average: 11.95, Standard Deviation: 22.06
+Best: Ieklo world! (2), Average: 12.08, Standard Deviation: 21.92
+Best: Hemlo world! (1), Average: 12.98, Standard Deviation: 23.25
+Best: Hemlo world! (1), Average: 12.32, Standard Deviation: 22.38
+Best: Hemlo world! (1), Average: 12.33, Standard Deviation: 22.19
+Best: Hemlo world! (1), Average: 12.63, Standard Deviation: 22.73
+Best: Hemlo world! (1), Average: 12.27, Standard Deviation: 22.40
+Best: Hemlo world! (1), Average: 11.72, Standard Deviation: 21.94
+Best: Hemlo world! (1), Average: 11.33, Standard Deviation: 21.71
+Best: Hemlo world! (1), Average: 11.25, Standard Deviation: 21.70
+Best: Hemlo world! (1), Average: 11.29, Standard Deviation: 21.96
+Best: Hemlo world! (1), Average: 11.25, Standard Deviation: 22.52
+Best: Hemlo world! (1), Average: 10.90, Standard Deviation: 22.27
+Best: Hemlo world! (1), Average: 11.46, Standard Deviation: 22.77
+Best: Hemlo world! (1), Average: 10.88, Standard Deviation: 21.81
+Best: Hemlo world! (1), Average: 10.25, Standard Deviation: 21.28
+Best: Hemlo world! (1), Average: 11.00, Standard Deviation: 21.91
+Best: Hemlo world! (1), Average: 10.45, Standard Deviation: 21.73
+Best: Hemlo world! (1), Average: 11.21, Standard Deviation: 22.23
+Best: Hemlo world! (1), Average: 10.92, Standard Deviation: 22.07
+Best: Hemlo world! (1), Average: 10.53, Standard Deviation: 21.34
+Best: Hemlo world! (1), Average: 10.78, Standard Deviation: 21.94
+Best: Hemlo world! (1), Average: 10.77, Standard Deviation: 21.63
+Best: Hemlo world! (1), Average: 11.27, Standard Deviation: 22.20
+Best: Hemlo world! (1), Average: 10.46, Standard Deviation: 21.30
+Best: Hemlo world! (1), Average: 10.26, Standard Deviation: 21.27
+Best: Hemlo world! (1), Average: 10.99, Standard Deviation: 22.10
+Best: Hemlo world! (1), Average: 10.79, Standard Deviation: 21.89
+Best: Hemlo world! (1), Average: 10.86, Standard Deviation: 21.83
+Best: Hello world! (0), Average: 11.17, Standard Deviation: 21.94
+
