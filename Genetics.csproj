@@ -43,6 +43,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Gen.cs" />
+    <Compile Include="NQueensGen.cs" />
     <Compile Include="StringGen.cs" />
     <Compile Include="GeneticsAlgorithms.cs" />
     <Compile Include="Manager.cs" />

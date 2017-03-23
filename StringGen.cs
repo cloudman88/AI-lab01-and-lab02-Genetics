@@ -3,21 +3,14 @@ using System.CodeDom;
 
 namespace Genetics
 {
-    class StringGen // old name was GaStruct in the given code
+    class StringGen : Gen
     {
-
-        private string _str;              // the string
-        private uint _fitness;           // its fitness
+        private string _str;              // the string           
         public string Str
         {
             get { return _str; }
             set { _str = value; }
-        }
-        public uint Fitness
-        {
-            get { return _fitness; }
-            set { _fitness = value; }
-        }
+        }       
         public StringGen()
         {
             _str = "";

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Genetics
 {
@@ -9,35 +10,22 @@ namespace Genetics
         {
             do
             {
-                // Compose a string that consists of three lines.
-                //string lines = "";
+                //StringSearch stringSearch = new StringSearch();
+                //List<StringGen> population = new List<StringGen>();
+                //List<StringGen> buffer = new List<StringGen>();
 
-                GeneticsAlgorithms geneticsAlgorithms = new GeneticsAlgorithms();
-                List<StringGen> population = new List<StringGen>();
-                List<StringGen> buffer = new List<StringGen>();
+                //stringSearch.init_population(ref population,ref buffer);
+                //stringSearch.RunAlgorithm(ref population,ref buffer);
 
-                geneticsAlgorithms.init_population(ref population,ref buffer);
-                int totalIteration = -1;
-                for (int i = 0; i < GeneticsAlgorithms.GaMaxiter; i++)
-                {
-                    geneticsAlgorithms.calc_fitness(ref population);		// calculate fitness
-                 //   geneticsAlgorithms.calc_fitness_with_bonus(ref population); // calculate fitness with bonuses
+                //List<int> x = new List<int>(5);
+                //var a = Enumerable.Repeat(0, 5).ToList();
 
-                    geneticsAlgorithms.sort_by_fitness(ref population);   // sort them
-                    var avg = geneticsAlgorithms.calc_avg(population); // calc avg
-                    var stdDev = geneticsAlgorithms.calc_std_dev(population, avg); //calc std dev
-                    geneticsAlgorithms.print_result_details(population,avg,stdDev);        // print the best one, average and std dev
-                    if ((population)[0].Fitness == 0)
-                    {
-                        totalIteration = i; // save number of iteration
-                        break;
-                    }
+                NQueens nQueens = new NQueens(12,MutationOperator.SimpleInversion);
+                List<NQueensGen> population = new List<NQueensGen>();
+                List<NQueensGen> buffer = new List<NQueensGen>();
 
-                    geneticsAlgorithms.Mate(population,ref buffer);     // mate the population together
-                    geneticsAlgorithms.Swap(ref population,ref buffer);       // swap buffers
-                }
-                Console.WriteLine("Iterations: "+ totalIteration);
-
+                nQueens.init_population(ref population, ref buffer);
+                nQueens.RunAlgorithm(ref population, ref buffer,CrossoverMethod.ER);
             } while (Console.ReadKey(true).Key != ConsoleKey.Escape);
 
         }

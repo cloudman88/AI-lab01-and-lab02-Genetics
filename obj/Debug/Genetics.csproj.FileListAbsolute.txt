@@ -5,8 +5,8 @@ C:\Users\Adam\Studies\מעבדה בבינה מלאכותית\Assignments\assignm
 C:\Users\Adam\Studies\מעבדה בבינה מלאכותית\Assignments\assignment1\HW1 Solution\Genetics\Genetics\obj\Debug\Genetics.pdb
 C:\Users\Adam\Studies\מעבדה בבינה מלאכותית\Assignments\assignment1\HW1 Solution\Genetics\Genetics\obj\Debug\Genetics.csprojResolveAssemblyReference.cache
 C:\Users\Adam\Studies\AI Lab\Assignments\assignment1\HW1 Solution\Genetics\Genetics\bin\Debug\Genetics.exe.config
-C:\Users\Adam\Studies\AI Lab\Assignments\assignment1\HW1 Solution\Genetics\Genetics\obj\Debug\Genetics.exe
-C:\Users\Adam\Studies\AI Lab\Assignments\assignment1\HW1 Solution\Genetics\Genetics\obj\Debug\Genetics.pdb
 C:\Users\Adam\Studies\AI Lab\Assignments\assignment1\HW1 Solution\Genetics\Genetics\bin\Debug\Genetics.exe
 C:\Users\Adam\Studies\AI Lab\Assignments\assignment1\HW1 Solution\Genetics\Genetics\bin\Debug\Genetics.pdb
 C:\Users\Adam\Studies\AI Lab\Assignments\assignment1\HW1 Solution\Genetics\Genetics\obj\Debug\Genetics.csprojResolveAssemblyReference.cache
+C:\Users\Adam\Studies\AI Lab\Assignments\assignment1\HW1 Solution\Genetics\Genetics\obj\Debug\Genetics.exe
+C:\Users\Adam\Studies\AI Lab\Assignments\assignment1\HW1 Solution\Genetics\Genetics\obj\Debug\Genetics.pdb
