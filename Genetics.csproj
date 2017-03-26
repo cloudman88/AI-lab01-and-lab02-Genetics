@@ -43,15 +43,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Gen.cs" />
-    <Compile Include="NQueensGen.cs" />
-    <Compile Include="StringGen.cs" />
+    <Compile Include="BinPackingAlgorithm.cs" />
+    <Compile Include="BinPackingGenetics.cs" />
+    <Compile Include="Gens\Gen.cs" />
+    <Compile Include="MinConflitsAlgorithm.cs" />
+    <Compile Include="Gens\NQueensGen.cs" />
+    <Compile Include="Gens\StringGen.cs" />
     <Compile Include="GeneticsAlgorithms.cs" />
     <Compile Include="Manager.cs" />
     <Compile Include="NQueens.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StringSearch.cs" />
+    <Compile Include="Gens\VolumesGen.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

@@ -1,0 +1,5 @@
+C:\Users\Adam\Studies\AI Lab\Assignments\assignment1\HW1 Solution\Genetics\Genetics\bin\Release\Genetics.exe.config
+C:\Users\Adam\Studies\AI Lab\Assignments\assignment1\HW1 Solution\Genetics\Genetics\bin\Release\Genetics.exe
+C:\Users\Adam\Studies\AI Lab\Assignments\assignment1\HW1 Solution\Genetics\Genetics\bin\Release\Genetics.pdb
+C:\Users\Adam\Studies\AI Lab\Assignments\assignment1\HW1 Solution\Genetics\Genetics\obj\Release\Genetics.exe
+C:\Users\Adam\Studies\AI Lab\Assignments\assignment1\HW1 Solution\Genetics\Genetics\obj\Release\Genetics.pdb

@@ -1,30 +1,25 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
+using System.Text;
+using System.Threading.Tasks;
 using Genetics.Gens;
 
 namespace Genetics
 {
-    enum MutationOperator
+    class BinPackingGenetics : GeneticsAlgorithms<VolumesGen>
     {
-        Displacement,
-        Exchange,
-        Insertion,
-        SimpleInversion,
-        Inversion,
-        Scramble
-    }
-    class NQueens : GeneticsAlgorithms<NQueensGen>
-    {
-        private readonly int _n;
         private readonly MutationOperator _mutationOperator;
+        private readonly List<int> _volumes;
+        private readonly int _containerCapacity;
+        private readonly int _lowerBound;
 
-        public NQueens(int n, MutationOperator mutationOperator,CrossoverMethod method,bool isTour ) : base(method,isTour)
+        public BinPackingGenetics(List<int> volumes, int containerCapacity, MutationOperator mutationOperator, CrossoverMethod method,bool isTour) : base(method,isTour)
         {
-            _n = n;
             _mutationOperator = mutationOperator;
+            _volumes = new List<int>(volumes);
+            _containerCapacity = containerCapacity;
+            _lowerBound = (int) Math.Ceiling((decimal) (volumes.Sum()/containerCapacity));
         }
 
         public override void init_population()
@@ -33,86 +28,76 @@ namespace Genetics
             buffer.Clear();
             for (int i = 0; i < GaPopSize; i++)
             {
-                NQueensGen queensGen = new NQueensGen(_n);
-                List<int> numbers = Enumerable.Range(0, _n).ToList();
-
-                for (int j = 0; j < _n; j++)
+                List<int> emptyVols = Enumerable.Repeat(-1, _volumes.Count).ToList();
+                VolumesGen volumesGen = new VolumesGen(emptyVols);
+                List<int> vols = new List<int>(_volumes);
+                for (int j = 0; j < _volumes.Count; j++)
                 {
-                    var index = Rand.Next() % numbers.Count;
-                    queensGen.NQueensPos[j] = numbers[index];
-                    numbers.RemoveAt(index);
+                    var index = Rand.Next() % vols.Count;
+                    volumesGen.Volumes[j] = vols[index];
+                    vols.RemoveAt(index);
                 }
 
-                population.Add(queensGen);
-                buffer.Add(new NQueensGen(_n));
+                population.Add(volumesGen);
+                buffer.Add(new VolumesGen(emptyVols));
             }
+
         }
 
         protected override void calc_fitness()
         {
+            BinPackingAlgorithm bpa = new BinPackingAlgorithm(_volumes,_containerCapacity);
             for (int i = 0; i < GaPopSize; i++)
             {
-                uint fitness = 0;
-                fitness += calc_crosses_hit(population[i].NQueensPos);                
-                population[i].Fitness = fitness;
+                bpa.Volumes = new List<int>(population[i].Volumes);
+                bpa.Bins.Clear();
+                bpa.run_first_fit_algo(false);
+                population[i].Fitness = (uint) (bpa.Bins.Count - _lowerBound);
             }
         }
-        private uint calc_crosses_hit(List<int> nQueensGen)
+        protected override void Mutate(VolumesGen member)
         {
-            uint crossFit = 0;
-            for (int i = 0; i < _n; i++)
-            {
-                for (int j = i+1; j < _n; j++)
-                {
-                    if (Math.Abs(j - i) == Math.Abs(nQueensGen[j] - nQueensGen[i]))
-                    {
-                        crossFit += 20;
-                    }
-                }
-            }
-            return crossFit;
-        }
-        protected override void Mutate(NQueensGen member)
-        {            
-            List<int> nQlist = member.NQueensPos.ToList();
-            int ipos1 = Rand.Next() % _n;
+            List<int> nQlist = member.Volumes.ToList();
+            int volsSize = _volumes.Count;
+            int ipos1 = Rand.Next() % volsSize;
             int ipos2;
             switch (_mutationOperator)
             {
-                    case MutationOperator.Displacement:
-                        ipos2 = Rand.Next() % (_n-ipos1) + ipos1;
-                        if (ipos2-ipos1!=7)
-                            member.NQueensPos = MutOpDisplacement(ipos1,ipos2,nQlist);
+                case MutationOperator.Displacement:
+                    ipos2 = Rand.Next() % (volsSize - ipos1) + ipos1;
+                    if (ipos2 - ipos1 != 7)
+                        member.Volumes = MutOpDisplacement(ipos1, ipos2, nQlist);
                     break;
-                    case MutationOperator.Exchange:
-                        ipos2 = Rand.Next() % _n;
-                        member.NQueensPos = MutOpExchange(ipos1, ipos2, nQlist);
+                case MutationOperator.Exchange:
+                    ipos2 = Rand.Next() % volsSize;
+                    member.Volumes = MutOpExchange(ipos1, ipos2, nQlist);
                     break;
-                    case MutationOperator.Insertion:
-                        ipos2 = Rand.Next() % _n; 
-                        member.NQueensPos = MutOpInsertion(ipos1,ipos2,nQlist);
+                case MutationOperator.Insertion:
+                    ipos2 = Rand.Next() % volsSize;
+                    member.Volumes = MutOpInsertion(ipos1, ipos2, nQlist);
                     break;
-                    case MutationOperator.SimpleInversion:
-                        ipos2 = Rand.Next() % (_n - ipos1) + ipos1;
-                        member.NQueensPos = MutOpSimpleInversion(ipos1, ipos2, nQlist);
+                case MutationOperator.SimpleInversion:
+                    ipos2 = Rand.Next() % (volsSize - ipos1) + ipos1;
+                    member.Volumes = MutOpSimpleInversion(ipos1, ipos2, nQlist);
                     break;
-                    case MutationOperator.Inversion:
-                        ipos2 = Rand.Next() % (_n - ipos1) + ipos1;
-                        List<int> temp = MutOpSimpleInversion(ipos1, ipos2, nQlist);
-                        member.NQueensPos = MutOpDisplacement(ipos1, ipos2, temp.ToList());
+                case MutationOperator.Inversion:
+                    ipos2 = Rand.Next() % (volsSize - ipos1) + ipos1;
+                    List<int> temp = MutOpSimpleInversion(ipos1, ipos2, nQlist);
+                    member.Volumes = MutOpDisplacement(ipos1, ipos2, temp.ToList());
                     break;
-                    case MutationOperator.Scramble:
-                        ipos2 = Rand.Next() % (_n - ipos1) + ipos1;
-                        member.NQueensPos = MutOpScramble(ipos1, ipos2, nQlist);
+                case MutationOperator.Scramble:
+                    ipos2 = Rand.Next() % (volsSize - ipos1) + ipos1;
+                    member.Volumes = MutOpScramble(ipos1, ipos2, nQlist);
                     break;
-                    default:
-                        member.NQueensPos[ipos1] = Rand.Next()%_n;
+                default:
+                    member.Volumes[ipos1] = Rand.Next() % volsSize;
                     break;
             }
         }
-        private List<int> MutOpDisplacement(int ipos1,int ipos2, List<int> nQlist)
+        private List<int> MutOpDisplacement(int ipos1, int ipos2, List<int> nQlist)
         {
-            int gapPos = Rand.Next() % (_n - (ipos2 - ipos1));
+            int volsSize = _volumes.Count;
+            int gapPos = Rand.Next() % (volsSize - (ipos2 - ipos1));
             List<int> chosenPart = new List<int>();
             List<int> theRest = new List<int>(nQlist);
             for (int i = ipos1, count = 0; i < ipos2 + 1; i++, count++)
@@ -140,7 +125,7 @@ namespace Genetics
             int fix = (ipos2 == 0) ? 0 : 1;
             nQlist.Insert(ipos2 + fix, selectedVal);
             nQlist.Remove(-1);
-           return nQlist;
+            return nQlist;
         }
         private List<int> MutOpSimpleInversion(int ipos1, int ipos2, List<int> nQlist)
         {
@@ -163,12 +148,12 @@ namespace Genetics
             {
                 chosenPart.Add(nQlist[i]);
             }
-            
+
             //scramble the chosen part
             var chosenPartSize = chosenPart.Count;
             for (int i = 0; i < chosenPartSize / 2; i++)
             {
-                int rand1 = Rand.Next()% chosenPartSize;
+                int rand1 = Rand.Next() % chosenPartSize;
                 int rand2 = Rand.Next() % chosenPartSize;
                 var temp = chosenPart[rand1];
                 chosenPart[rand1] = chosenPart[rand2];
@@ -181,11 +166,13 @@ namespace Genetics
             }
             return nQlist;
         }
-        protected override void mate_by_method(NQueensGen bufGen, NQueensGen gen1, NQueensGen gen2)
+        protected override void mate_by_method(VolumesGen bufGen, VolumesGen gen1, VolumesGen gen2)
         {
-            List<int> nQlist1 = gen1.NQueensPos.ToList();
-            List<int> nQlist2 = gen2.NQueensPos.ToList();
-            int ipos1 = Rand.Next() % _n;
+            List<int> nQlist1 = gen1.Volumes.ToList();
+            List<int> nQlist2 = gen2.Volumes.ToList();
+            int volsSize = _volumes.Count;
+            int ipos1 = Rand.Next() % volsSize;
+            //int qpos2 = Rand.Next() % (volsSize - qpos1) + qpos1;
             switch (crossoverMethod)
             {
                 case CrossoverMethod.PMX:
@@ -197,15 +184,15 @@ namespace Genetics
                     nQlist2[index2] = val2;
                     nQlist1[ipos1] = val2;
                     nQlist2[ipos1] = val1;
-                    bufGen.NQueensPos = nQlist2;
+                    bufGen.Volumes = nQlist2;
                     break;
                 case CrossoverMethod.OX:
-                    List<int> temp = Enumerable.Repeat(-1, _n).ToList();
-                    List<int> numbers = Enumerable.Range(0, _n).ToList();
+                    List<int> temp = Enumerable.Repeat(-1, volsSize).ToList();
+                    List<int> numbers = Enumerable.Range(0, volsSize).ToList();
 
-                    for (int i = 0; i < _n/2; i++)
+                    for (int i = 0; i < volsSize / 2; i++)
                     {
-                         temp[numbers[ipos1]] = nQlist1[numbers[ipos1]];
+                        temp[numbers[ipos1]] = nQlist1[numbers[ipos1]];
                         numbers.RemoveAt(ipos1);
                         ipos1 = Rand.Next() % numbers.Count;
                     }
@@ -218,14 +205,14 @@ namespace Genetics
                             {
                                 j++;
                             }
-                            if (j!= temp.Count) temp[j] = val;
+                            if (j != temp.Count) temp[j] = val;
                         }
                     }
-                    bufGen.NQueensPos = temp;
+                    bufGen.Volumes = temp;
                     break;
                 case CrossoverMethod.CX:
                     List<int> cycle = new List<int>();
-                    List<int> result = Enumerable.Repeat(-1, _n).ToList();
+                    List<int> result = Enumerable.Repeat(-1, volsSize).ToList();
                     int k = 1;
                     var start = nQlist1[0];
                     cycle.Add(start);
@@ -233,14 +220,14 @@ namespace Genetics
                     if (start != end)
                     {
                         cycle.Add(nQlist2[0]);
-                        while (k < _n)
+                        while (k < volsSize)
                         {
                             var endIndex = nQlist1.IndexOf(end);
                             end = nQlist2[endIndex];
                             if (start == end) break;
                             cycle.Add(end);
                             k++;
-                        }                                       
+                        }
                     }
 
                     foreach (var val in cycle)
@@ -249,7 +236,7 @@ namespace Genetics
                         result[index] = val;
                     }
                     k = 0;
-                    while (k < _n)
+                    while (k < volsSize)
                     {
                         if (result[k] == -1)
                         {
@@ -257,20 +244,20 @@ namespace Genetics
                         }
                         k++;
                     }
-                    bufGen.NQueensPos = result;
+                    bufGen.Volumes = result;
                     break;
                 case CrossoverMethod.ER:
-                    Dictionary<int,List<int>> neighborsDic1 = new Dictionary<int, List<int>>();
+                    Dictionary<int, List<int>> neighborsDic1 = new Dictionary<int, List<int>>();
                     Dictionary<int, List<int>> neighborsDic2 = new Dictionary<int, List<int>>();
                     Dictionary<int, List<int>> neighborsDicMerged = new Dictionary<int, List<int>>();
 
-                    for (int i = 0; i < _n; i++)
+                    for (int i = 0; i < volsSize; i++)
                     {
                         List<int> neighbors1 = new List<int>();
                         List<int> neighbors2 = new List<int>();
-                        int right = (i + 1) % _n;
+                        int right = (i + 1) % volsSize;
                         int left = i - 1;
-                        if (left < 0) left = _n - 1;
+                        if (left < 0) left = volsSize - 1;
                         neighbors1.Add(nQlist1[right]);
                         neighbors1.Add(nQlist1[left]);
                         neighbors2.Add(nQlist2[right]);
@@ -281,7 +268,7 @@ namespace Genetics
 
                     // join lists for all vals
                     int p = 0;
-                    while (p < _n)
+                    while (p < volsSize)
                     {
                         var list1 = neighborsDic1[p];
                         var list2 = neighborsDic2[p];
@@ -293,14 +280,14 @@ namespace Genetics
                     int link = nQlist1[0];
                     res.Add(link);
 
-                    numbers = Enumerable.Range(0, _n).ToList();
+                    numbers = Enumerable.Range(0, volsSize).ToList();
                     numbers.Remove(link);
                     RemoveNeigbhorFromAllLists(neighborsDicMerged, link);
-                    while (res.Count < _n)
-                    {                        
+                    while (res.Count < volsSize)
+                    {
                         var neighbors = neighborsDicMerged[link];
 
-                        int minNeighbors = _n;
+                        int minNeighbors = volsSize;
                         int tempIndex = 0;
                         if (neighbors.Count > 0)
                         {
@@ -319,21 +306,21 @@ namespace Genetics
                         }
                         else
                         {
-                            var index = Rand.Next()%numbers.Count;
+                            var index = Rand.Next() % numbers.Count;
                             link = numbers[index];
                             numbers.Remove(link);
                             res.Add(link);
                             RemoveNeigbhorFromAllLists(neighborsDicMerged, link);
                         }
                     }
-                    bufGen.NQueensPos = res;
+                    bufGen.Volumes = res;
 
                     break;
             }
         }
-        private void RemoveNeigbhorFromAllLists(Dictionary<int, List<int>> neighborsDicMerged,int target)
+        private void RemoveNeigbhorFromAllLists(Dictionary<int, List<int>> neighborsDicMerged, int target)
         {
-            for (int i = 0; i < _n; i++)
+            for (int i = 0; i < _volumes.Count; i++)
             {
                 var x = neighborsDicMerged[i];
                 if (x.Contains(target))
@@ -342,12 +329,12 @@ namespace Genetics
                 }
             }
         }
-        protected override Tuple<string, uint> get_best_gen_details(NQueensGen gen)
+        protected override Tuple<string, uint> get_best_gen_details(VolumesGen gen)
         {
             string str = "";
-            foreach (var cell in gen.NQueensPos)
+            foreach (var cell in gen.Volumes)
             {
-                str += cell.ToString()+" ";
+                str += cell.ToString() + " ";
             }
             return new Tuple<string, uint>(str, gen.Fitness);
         }

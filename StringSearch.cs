@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Genetics.Gens;
 
 namespace Genetics
 {
@@ -12,10 +13,36 @@ namespace Genetics
         private const double BigBonus = 0.90;
         private const double MaxBonus = 0.50;
 
-        public StringSearch() { }
-        public override void init_population(ref List<StringGen> population, ref List<StringGen> buffer)
+        public StringSearch(CrossoverMethod method,bool isTour) : base(method,isTour)
+        {
+        }
+
+        public virtual void run_algorithm(bool isBonus)
+        {
+            int totalIteration = -1;
+            for (int i = 0; i < GaMaxiter; i++)
+            {
+                if (isBonus == true) calc_fitness_with_bonus(); // calculate fitness with bonuses
+                else    calc_fitness();      // calculate fitness
+                sort_by_fitness();   // sort them
+                var avg = calc_avg(); // calc avg
+                var stdDev = calc_std_dev(avg); //calc std dev
+                print_result_details(population[0], avg, stdDev);  // print the best one, average and std dev
+                if ((population)[0].Fitness == 0)
+                {
+                    totalIteration = i; // save number of iteration
+                    break;
+                }
+                Mate();     // mate the population together
+                swap_population_with_buffer();       // swap buffers
+            }
+            Console.WriteLine("Iterations: " + totalIteration);
+        }
+        public override void init_population()
         {
             int targetLength = StrTarget.Length;
+            population.Clear();
+            buffer.Clear();
             for (int i = 0; i < GaPopSize; i++)
             {
                 StringGen citizen = new StringGen();
@@ -29,7 +56,8 @@ namespace Genetics
                 buffer.Add(new StringGen());
             }
         }
-        public override void calc_fitness(ref List<StringGen> population)
+
+        protected override void calc_fitness()
         {
             string target = StrTarget;
             int targetLenght = target.Length;
@@ -39,12 +67,13 @@ namespace Genetics
                 uint fitness = 0;
                 for (int j = 0; j < targetLenght; j++)
                 {
+
                     fitness += (uint)Math.Abs(population[i].Str[j] - target[j]);
                 }
                 population[i].Fitness = fitness;
             }
         }
-        public void calc_fitness_with_bonus(ref List<StringGen> population)
+        private void calc_fitness_with_bonus()
         {
             string target = StrTarget;
             int targetLenght = target.Length;
@@ -86,18 +115,8 @@ namespace Genetics
                 }
                 population[i].Fitness = fitness;
             }
-        }
-        
-        //public override void Elitism(List<StringGen> population, ref List<StringGen> buffer, int esize)
-        //{
-        //    for (int i = 0; i < esize; i++)
-        //    {
-        //        buffer[i] = population[i];
-        //        //buffer[i].Str = population[i].Str;
-        //        //buffer[i].Fitness = population[i].Fitness;
-        //    }
-        //}
-        public override void Mutate(StringGen member)
+        }        
+        protected override void Mutate(StringGen member)
         {           
             int targetLenght = StrTarget.Length;
             int ipos = Rand.Next() % targetLenght;
@@ -107,13 +126,12 @@ namespace Genetics
             sb[ipos] = Convert.ToChar((charVal + delta) % 122);
             member.Str = sb.ToString();
         }
-        public override void MateByMethod(StringGen bufGen, StringGen gen1, StringGen gen2,
-                                            CrossoverMethod method)
+        protected override void mate_by_method(StringGen bufGen, StringGen gen1, StringGen gen2)
         {
             int targetLenght = StrTarget.Length;
             int spos = Rand.Next() % targetLenght;
             int spos2 = Rand.Next() % (targetLenght - spos) + spos;
-            switch (method)
+            switch (crossoverMethod)
             {
                 case CrossoverMethod.SinglePoint:
                     bufGen.Str = gen1.Str.Substring(0, spos) + gen2.Str.Substring(spos, targetLenght - spos);
@@ -133,7 +151,7 @@ namespace Genetics
                     break;
             }
         }
-        public override Tuple<string, uint> GetBestGenDetails(StringGen gen)
+        protected override Tuple<string, uint> get_best_gen_details(StringGen gen)
         {
             return new Tuple<string, uint>(gen.Str, gen.Fitness);
         }

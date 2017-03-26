@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Genetics
 {
@@ -8,26 +6,15 @@ namespace Genetics
     {
         static void Main(string[] args)
         {
+            Manager man = new Manager();
+            DateTime currentDate = DateTime.Now;
             do
             {
-                //StringSearch stringSearch = new StringSearch();
-                //List<StringGen> population = new List<StringGen>();
-                //List<StringGen> buffer = new List<StringGen>();
-
-                //stringSearch.init_population(ref population,ref buffer);
-                //stringSearch.RunAlgorithm(ref population,ref buffer);
-
-                //List<int> x = new List<int>(5);
-                //var a = Enumerable.Repeat(0, 5).ToList();
-
-                NQueens nQueens = new NQueens(12,MutationOperator.SimpleInversion);
-                List<NQueensGen> population = new List<NQueensGen>();
-                List<NQueensGen> buffer = new List<NQueensGen>();
-
-                nQueens.init_population(ref population, ref buffer);
-                nQueens.RunAlgorithm(ref population, ref buffer,CrossoverMethod.ER);
+                Console.WriteLine("   {0:N0} ticks", currentDate.Ticks);                
+                Console.WriteLine(currentDate.Ticks); 
+                    
+                man.Run();
             } while (Console.ReadKey(true).Key != ConsoleKey.Escape);
-
         }
     }
 }
