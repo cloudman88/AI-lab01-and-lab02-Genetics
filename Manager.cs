@@ -12,11 +12,9 @@ namespace Genetics
         private MutationOperator _mutationOperator;
         private int _n;
         private bool isTournament;
-        private Stopwatch _sw;
 
         public Manager()
         {
-            _sw = new Stopwatch();
         }
 
         public void Run()
@@ -64,12 +62,8 @@ namespace Genetics
             StringSearch stringSearch = new StringSearch(_crossoverMethod, isTournament);
             do
             {
-                _sw.Start();
                 stringSearch.init_population();
                 stringSearch.run_algorithm(isBonus);
-                _sw.Stop();
-                Console.WriteLine("Elapsed={0}", _sw.Elapsed);
-                _sw.Reset();
                 Console.WriteLine("press any key to run again or escapse to exit");
             } while (Console.ReadKey(true).Key != ConsoleKey.Escape);
         }
