@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Genetics.Gens;
+using Genetics.NQueens;
 
-namespace Genetics
+namespace Genetics.MinimalConflits
 {
     class MinConflitsAlgorithm
     {

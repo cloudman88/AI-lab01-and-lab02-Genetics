@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using Genetics.GeneticsAlgorithms;
 
-namespace Genetics.Gens
+namespace Genetics.BinPacking
 {
     /*
      * Gen type used for bin backing algorithm

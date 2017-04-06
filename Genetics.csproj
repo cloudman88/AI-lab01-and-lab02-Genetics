@@ -43,24 +43,36 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BinPackingAlgorithm.cs" />
-    <Compile Include="BinPackingGenetics.cs" />
-    <Compile Include="Gens\Gen.cs" />
-    <Compile Include="MinConflitsAlgorithm.cs" />
-    <Compile Include="Gens\NQueensGen.cs" />
-    <Compile Include="Gens\StringGen.cs" />
-    <Compile Include="GeneticsAlgorithms.cs" />
+    <Compile Include="BinPacking\BinPackingAlgorithm.cs" />
+    <Compile Include="BinPacking\BinPackingGenetics.cs" />
+    <Compile Include="GeneticsAlgorithms\Gen.cs" />
+    <Compile Include="GeneticsAlgorithms\GenHistory.cs" />
+    <Compile Include="MinimalConflits\MinConflitsAlgorithm.cs" />
+    <Compile Include="NQueens\NQueensGen.cs" />
+    <Compile Include="StringSearch\StringGen.cs" />
+    <Compile Include="GeneticsAlgorithms\GeneticsAlgorithms.cs" />
     <Compile Include="Manager.cs" />
-    <Compile Include="NQueens.cs" />
+    <Compile Include="NQueens\NQueens.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="StringSearch.cs" />
-    <Compile Include="Gens\VolumesGen.cs" />
+    <Compile Include="StringSearch\StringSearch.cs" />
+    <Compile Include="BinPacking\VolumesGen.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="BinPackingProbelms\Falkenauer_u1000_00.txt" />
+    <Content Include="BinPackingProbelms\Falkenauer_u120_00.txt" />
+    <Content Include="BinPackingProbelms\Falkenauer_u250_00.txt" />
+    <Content Include="BinPackingProbelms\Falkenauer_u500_00.txt" />
+    <Content Include="BinPackingProbelms\readme.txt" />
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>xcopy "$(ProjectDir)BinPackingProbelms\*" "$(ProjectDir)$(OutDir)" /Y</PreBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

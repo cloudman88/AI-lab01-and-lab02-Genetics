@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
+using Genetics.BinPacking;
+using Genetics.GeneticsAlgorithms;
+using Genetics.MinimalConflits;
+using Genetics.NQueens;
 
 namespace Genetics
 {
@@ -11,7 +13,7 @@ namespace Genetics
         private CrossoverMethod _crossoverMethod;
         private MutationOperator _mutationOperator;
         private int _n;
-        private bool isTournament;
+        private SelectionMethod _selectionMethod;
 
         public Manager()
         {
@@ -55,15 +57,16 @@ namespace Genetics
         }
         private void run_string_search()
         {
-           choose_crossover_method(false);
-            set_isTournamnet();
+            choose_crossover_method(false);
+            set_selection_method();
             bool isBonus = set_isBonus();
 
-            StringSearch stringSearch = new StringSearch(_crossoverMethod, isTournament);
+            StringSearch.StringSearch stringSearch = new StringSearch.StringSearch(_crossoverMethod,_selectionMethod);
+            stringSearch.IsBonus = isBonus;
             do
             {
                 stringSearch.init_population();
-                stringSearch.run_algorithm(isBonus);
+                stringSearch.run_algorithm();
                 Console.WriteLine("press any key to run again or escapse to exit");
             } while (Console.ReadKey(true).Key != ConsoleKey.Escape);
         }
@@ -73,8 +76,8 @@ namespace Genetics
             choose_crossover_method();
             choose_mutations_operator();
             set_value_for_N();
-            set_isTournamnet();
-            NQueens nQueens = new NQueens(_n, _mutationOperator, _crossoverMethod, isTournament);
+            set_selection_method();
+            NQueens.NQueens nQueens = new NQueens.NQueens(_n, _mutationOperator, _crossoverMethod, _selectionMethod);
             do
             {
                 nQueens.init_population();
@@ -97,7 +100,7 @@ namespace Genetics
         {
             choose_crossover_method();
             choose_mutations_operator();
-            set_isTournamnet();
+            set_selection_method();
             List<int> volumes = new List<int>() { 3, 1, 6, 4, 5, 2 };
             string str = "";
             foreach (var volume in volumes)
@@ -108,11 +111,12 @@ namespace Genetics
             Console.WriteLine("numbers to be set in minimum bins :"+ str);
             Console.WriteLine("container size :"+containerSize);
 
-            BinPackingGenetics bpg = new BinPackingGenetics(volumes, containerSize,_mutationOperator,_crossoverMethod , isTournament);
+            BinPackingGenetics bpg = new BinPackingGenetics(volumes, containerSize,_mutationOperator,_crossoverMethod, _selectionMethod);
             do
             {
                 bpg.init_population();
                 bpg.run_algorithm();
+                bpg.print_bins_result();
                 Console.WriteLine("press any key to run again or escapse to exit");
             } while (Console.ReadKey(true).Key != ConsoleKey.Escape);
         }
@@ -143,7 +147,7 @@ namespace Genetics
                     input = Convert.ToInt32(Console.ReadLine());
                     Console.WriteLine("");
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     validInput = false;
                     Console.WriteLine("please enter a number");
@@ -209,18 +213,22 @@ namespace Genetics
             } while (input <= 0);
             _n = input;
         }
-        private void set_isTournamnet()
+        private void set_selection_method()
         {
             Console.WriteLine("Please set if Selection method: ");
-            Console.WriteLine("1. Tournament");
-            Console.WriteLine("2. Truncation ");
+            var selectionList = Enum.GetValues(typeof(SelectionMethod)).Cast<SelectionMethod>().ToList();
+            for (int i = 0; i < selectionList.Count; i++)
+            {
+                var index = i + 1;
+                Console.WriteLine(index + ". " + selectionList[i]);
+            }
             int input = 0;
             do
             {
                 input = get_input();
 
-            } while (input <= 0 || input >2);
-            isTournament = (input==1);
+            } while (input <= 0 || input > selectionList.Count);
+            _selectionMethod = selectionList[input];
         }
         private bool set_isBonus()
         {
@@ -235,5 +243,6 @@ namespace Genetics
             } while (input <= 0 || input > 2);
             return (input == 1);
         }
+
     }
 }

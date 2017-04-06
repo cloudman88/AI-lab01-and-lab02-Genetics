@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace Genetics
+namespace Genetics.BinPacking
 {
     class BinPackingAlgorithm
     {
@@ -20,16 +20,16 @@ namespace Genetics
             _lowerBound = (int) Math.Ceiling((decimal) (Volumes.Sum()/_containerSize));
         }
 
-        private void print_result()
+        public void print_result(ObservableCollection<List<int>> bins = null)
         {
+            if (bins != null) Bins = bins;
             string volumesString = "";
             foreach (var vol in Volumes)
             {
                 volumesString += vol + " ";
             }
-            Console.WriteLine("Input volumes: " + volumesString);
             Console.WriteLine("Lower bound is  "+ _lowerBound + " bins for container sized "+_containerSize);
-            Console.WriteLine("FirstFit result "+Bins.Count+" bins");
+            Console.WriteLine("Result "+Bins.Count+" bins");
             int i = 0;
             foreach (var bin in Bins)
             {

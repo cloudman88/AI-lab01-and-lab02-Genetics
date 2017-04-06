@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Genetics.GeneticsAlgorithms;
 
-namespace Genetics.Gens 
+namespace Genetics.NQueens 
 {
     class NQueensGen : Gen
     {
