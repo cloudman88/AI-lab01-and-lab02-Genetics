@@ -54,6 +54,7 @@ namespace Genetics.BinPacking
                 _volumes.Add(volume);
             }
             _lowerBound = (int)Math.Ceiling((decimal)(_volumes.Sum() / _containerCapacity));
+            MaxFitness = (uint)(_volumes.Count - _lowerBound);
             bpa = new BinPackingAlgorithm(_volumes, _containerCapacity);
             _resultBins = new ObservableCollection<List<int>>();
         }
@@ -374,10 +375,6 @@ namespace Genetics.BinPacking
         protected override Tuple<string, uint> get_best_gen_details(VolumesGen gen)
         {
             string str = "...";
-            //foreach (var cell in gen.Volumes)
-            //{
-            //    str += cell.ToString() + " ";
-            //}
             return new Tuple<string, uint>(str, gen.Fitness);
         }
 
@@ -385,48 +382,6 @@ namespace Genetics.BinPacking
         {
             return new VolumesGen(_volumes);
         }
-
-        //public override void run_algorithm()
-        //{
-        //    Stopwatch sp = new Stopwatch();  //used to calculate total run time
-        //    sp.Start();
-        //    int totalIteration = -1;
-        //    for (int i = 0; i < GaMaxiter; i++)
-        //    {
-        //        DateTime start = DateTime.Now; //used to calculate run time of every generation (=iteration)
-        //        DateTime end;
-        //        calc_fitness();      // calculate fitness
-        //        sort_by_fitness();   // sort them
-        //        var avg = calc_avg(); // calc avg
-        //        var stdDev = calc_std_dev(avg); //calc std dev
-        //        print_result_details(population[0], avg, stdDev);  // print the best one, average and std dev
-        //        long elapsedTicks = 0;
-        //        if ((population)[0].Fitness == 0)
-        //        {
-        //            totalIteration = i + 1; // save number of iteration                    
-        //            end = DateTime.Now;
-        //            elapsedTicks = end.Ticks - start.Ticks;
-        //            Console.WriteLine("Iteration " + (i + 1) + ": Clock Ticks: " + elapsedTicks / TimeSpan.TicksPerMillisecond);
-        //            break;
-        //        }
-        //        Mate();     // mate the population together
-        //        swap_population_with_buffer();       // swap buffers
-        //        end = DateTime.Now;
-        //        elapsedTicks = end.Ticks - start.Ticks;
-        //        Console.WriteLine("Iteration " + (i + 1) + " Clock Ticks: " + elapsedTicks / TimeSpan.TicksPerMillisecond);
-        //    }
-        //    sp.Stop();
-        //    if (totalIteration == GaMaxiter)
-        //    {
-        //        Console.WriteLine("Failed to find solution in " + totalIteration + " iterations. #bins: "+population[0].Fitness+_lowerBound);
-        //    }
-        //    else
-        //    {
-        //        Console.WriteLine("Iterations: " + totalIteration);
-        //    }
-        //    Console.WriteLine("Absolute RunTime : " + sp.ElapsedMilliseconds);
-        //    bpa.print_result(_resultBins);
-        //}
 
         protected override int calc_distance(VolumesGen gen1, VolumesGen gen2)
         {

@@ -9,4 +9,3 @@ C:\Users\Adam\Studies\AI Lab\Assignments\assignment1\HW1 Solution\Genetics\Genet
 C:\Users\Adam\Studies\AI Lab\Assignments\assignment1\HW1 Solution\Genetics\Genetics\bin\Debug\Genetics.pdb
 C:\Users\Adam\Studies\AI Lab\Assignments\assignment1\HW1 Solution\Genetics\Genetics\obj\Debug\Genetics.exe
 C:\Users\Adam\Studies\AI Lab\Assignments\assignment1\HW1 Solution\Genetics\Genetics\obj\Debug\Genetics.pdb
-C:\Users\Adam\Studies\AI Lab\Assignments\assignment1\HW1 Solution\Genetics\Genetics\obj\Debug\Genetics.csprojResolveAssemblyReference.cache

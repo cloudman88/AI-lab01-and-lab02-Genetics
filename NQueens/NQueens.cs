@@ -23,6 +23,7 @@ namespace Genetics.NQueens
         {
             _n = n;
             _mutationOperator = mutationOperator;
+            MaxFitness = (uint)(_n*_n); // every queen threat on all the other queens
         }
 
         public override void init_population()
@@ -32,17 +33,20 @@ namespace Genetics.NQueens
             for (int i = 0; i < GaPopSize; i++)
             {
                 NQueensGen queensGen = new NQueensGen(_n);
-                List<int> numbers = Enumerable.Range(0, _n).ToList();
-
-                for (int j = 0; j < _n; j++)
-                {
-                    var index = Rand.Next() % numbers.Count;
-                    queensGen.NQueensPos[j] = numbers[index];
-                    numbers.RemoveAt(index);
-                }
-
+                create_permutation_sized_n(queensGen);
                 Population.Add(queensGen);
                 Buffer.Add(new NQueensGen(_n));
+            }
+        }
+
+        private void create_permutation_sized_n(NQueensGen queensGen)
+        {
+            List<int> numbers = Enumerable.Range(0, _n).ToList();
+            for (int j = 0; j < _n; j++)
+            {
+                var index = Rand.Next() % numbers.Count;
+                queensGen.NQueensPos[j] = numbers[index];
+                numbers.RemoveAt(index);
             }
         }
 
@@ -64,7 +68,7 @@ namespace Genetics.NQueens
                 {
                     if (Math.Abs(j - i) == Math.Abs(nQueensGen[j] - nQueensGen[i]))
                     {
-                        crossFit += 20;
+                        crossFit += 1;
                     }
                 }
             }
@@ -353,7 +357,9 @@ namespace Genetics.NQueens
 
         protected override NQueensGen get_new_gen()
         {
-            return new NQueensGen(_n);
+            NQueensGen nQueensGen = new NQueensGen(_n);
+            create_permutation_sized_n(nQueensGen);
+            return nQueensGen;
         }
 
         protected override int calc_distance(NQueensGen gen1, NQueensGen gen2)

@@ -29,13 +29,13 @@ namespace Genetics.GeneticsAlgorithms
     {
         protected readonly Random Rand;
         protected const int GaMaxiter	=	3000;		// maximum iterations 16384
-        protected const int GaPopSize	= 2048;		// ga population size 2048
+        protected const int GaPopSize	= 1000;		// ga population size 2048
         protected const double GaElitRate = 0.1;	    // elitism rate
         protected const double GaMutationRate = 0.25;    // mutation rate
         protected const int MaxRand = Int32.MaxValue;    //Max value of random function in C#
         protected const double GaMutation= MaxRand * GaMutationRate;
         protected const uint AgeThreshold = 20;
-        protected int BestGensHistoryTargetSize = 10;
+        protected int BestGensHistoryTargetSize = 20;
         protected const int Beta = 12;
         protected const int AvgMaxDif = 3;
         protected const int StdDevMaxDif = 3;
@@ -48,6 +48,8 @@ namespace Genetics.GeneticsAlgorithms
         protected CrossoverMethod CrosMethod;
         protected SelectionMethod SelectMethod;
         protected List<GenHistory<T>> BestGensHistory;
+        protected bool HyperMutWasCalled;
+        protected bool LocalOptSearchEnabled;
 
         protected GeneticsAlgorithms(CrossoverMethod crossMethod,SelectionMethod selectionMethod)
         {
@@ -58,81 +60,43 @@ namespace Genetics.GeneticsAlgorithms
             SelectMethod = selectionMethod;
             BestGensHistory = new List<GenHistory<T>>(BestGensHistoryTargetSize);
             GaMutationFactor = 1;
+            LocalOptSearchEnabled = true;
         }
 
         public abstract void init_population();
         public virtual void run_algorithm()
         {
-            Stopwatch sp = new Stopwatch();  //used to calculate total run time
-            sp.Start();
             long totalTicks = 0;
-            int totalIteration = -1;
-            bool hyperMutWasCalled = false;
+            long totalElasped = 0;
+            int totalIteration = -1;            
+            Stopwatch stopWatch = new Stopwatch(); //stopwatch is used for both clock ticks and elasped time measuring
+            stopWatch.Start();
             for (int i = 0; i < GaMaxiter; i++)
-            {
-                long elapsedTicks = 0;
-                DateTime start = DateTime.Now; //used to calculate run time of every generation (=iteration)
+            {               
                 calc_fitness();      // calculate fitness
                 sort_by_fitness();   // sort them
-                DateTime end = DateTime.Now;
-                elapsedTicks = end.Ticks - start.Ticks;
-                elapsedTicks /= TimeSpan.TicksPerMillisecond;
                 var avg = calc_avg(); // calc avg
                 var stdDev = calc_std_dev(avg); //calc std dev
-                print_result_details(Population[0], avg, stdDev);  // print the best one, average and std dev
-                //check if there is an old bestGen for comparison
-                if (BestGensHistory.Count > 0 && (BestGensHistory.Count != BestGensHistoryTargetSize))
-                {
-                    var lastInBestHist = BestGensHistory.Last();
-                    var firstInBestHist = BestGensHistory.First();
-                    // if similar add to bestGensHistory, using calc_distance and avg,stdDev diffrence
-                    if (calc_distance(Population[0], lastInBestHist.BestGen) == 0 &&
-                       (Math.Abs(avg- firstInBestHist.Avg) <= AvgMaxDif || (avg - firstInBestHist.Avg) > AvgMaxDif) &&
-                       (Math.Abs(stdDev - firstInBestHist.StdDev) <= StdDevMaxDif || (stdDev - firstInBestHist.StdDev) > StdDevMaxDif))
-                    {
-                        GenHistory<T> gHist = new GenHistory<T>(Population[0], avg, stdDev);
-                        BestGensHistory.Add(gHist);
-                    }
-                    else
-                    {
-                        if (hyperMutWasCalled == true && calc_distance(Population[0], lastInBestHist.BestGen) > 0)
-                        {
-                            HyperMutations(true); //reset mutation rate factor
-                            hyperMutWasCalled = false;
-                        }
-                        BestGensHistory.Clear();
-                    }
-                }
-                //if bestGensHistory reached the target size => this is local optima
-                else if (BestGensHistory.Count == BestGensHistoryTargetSize)
-                {
-                    Console.WriteLine("Local optima was discoverd after " + (i + 1) + " iterations ");
-                    if (hyperMutWasCalled!=true)
-                        HyperMutations(); // local optima rescue
-                    //BestGensHistoryTragetSize *= 2;
-                    hyperMutWasCalled = true;
-                    BestGensHistory.Clear();
-                }
-                //if bestGensHistory is empty add the first gen
-                else
-                {
-                    GenHistory<T> gHist = new GenHistory<T>(Population[0], avg, stdDev);
-                    BestGensHistory.Add(gHist);
-                }
-                
+
+                //calculate time differences                
+                stopWatch.Stop();
+                double ticks = (stopWatch.ElapsedTicks / (double)Stopwatch.Frequency)*1000;
+                double elasped = (stopWatch.Elapsed.Ticks / (double)Stopwatch.Frequency)*1000;                
+                totalElasped += (long)elasped;               
+                totalTicks += (long)ticks;
+
+                print_result_details(Population[0], avg, stdDev,i);  // print the best one, average and std dev by iteration number                
+                if (LocalOptSearchEnabled == true)search_local_optima(avg,stdDev,i);
+
+                stopWatch.Restart(); // restart timers for next iteration
                 if ((Population)[0].Fitness == 0)
                 {
-                    totalIteration = i+1; // save number of iteration                                       
-                    totalTicks += elapsedTicks;
-                    Console.WriteLine("Iteration " + (i+1) + ": Clock Ticks: " + elapsedTicks + " (Milliseconds)");
+                    totalIteration = i+1; // save number of iteration                                                           
                     break;
                 }
                 Mate();     // mate the population together
                 swap_population_with_buffer();       // swap buffers
-                totalTicks += elapsedTicks;
-                Console.WriteLine("Iteration "+(i+1)+" Clock Ticks: " + elapsedTicks + "(Milliseconds)");
-            }
-            sp.Stop();
+            }            
             if (totalIteration == GaMaxiter)
             {
                 Console.WriteLine("Failed to find solution in " + totalIteration + " iterations.");
@@ -141,17 +105,76 @@ namespace Genetics.GeneticsAlgorithms
             {
                 Console.WriteLine("Iterations: " + totalIteration);                
             }
-            Console.WriteLine("Elasped run time (Absolut) : " + sp.ElapsedMilliseconds + " (Milliseconds)");
-            Console.WriteLine("Elasped - Total Ticks = " + (sp.ElapsedMilliseconds-totalTicks) + " (Milliseconds)");
+
+            Console.WriteLine("\nTimig in milliseconds:");
+            Console.WriteLine("Total Ticks "+ totalTicks);
+            Console.WriteLine("Total Elasped " + totalElasped);
+            Console.WriteLine("Elaspeds - Ticks = " + (totalElasped - totalTicks)+"\n");
         }
 
         protected void HyperMutations(bool isReset = false)
         {
-            if (isReset == false && (GaMutationRate * GaMutationFactor * 3 < 1))
+            if (isReset == false)
             {
-               GaMutationFactor *= 3;
+                if (GaMutationRate* GaMutationFactor * 3 < 1)
+                {
+                    GaMutationFactor *= 3;
+                }
+                else if (GaMutationRate*GaMutationFactor*2 < 1)
+                {
+                    GaMutationFactor *= 2;
+                }
+                else if (GaMutationRate * GaMutationFactor * 1.5 < 1)
+                {
+                    GaMutationFactor *= 1.5;
+                }
             }
-            else if (isReset==true) GaMutationFactor = 1;
+            else 
+                GaMutationFactor = 1;
+        }
+
+        protected void search_local_optima(double avg,double stdDev, int index)
+        {
+            //check if there is an old bestGen for comparison
+            if (BestGensHistory.Count > 0 && (BestGensHistory.Count != BestGensHistoryTargetSize))
+            {
+                var lastInBestHist = BestGensHistory.Last();
+                var firstInBestHist = BestGensHistory.First();
+                // if similar add to bestGensHistory, using calc_distance and avg,stdDev diffrence
+                if (calc_distance(Population[0], lastInBestHist.BestGen) == 0 &&
+                   (Math.Abs(avg - firstInBestHist.Avg) <= AvgMaxDif || (avg - firstInBestHist.Avg) > AvgMaxDif) &&
+                   (Math.Abs(stdDev - firstInBestHist.StdDev) <= StdDevMaxDif || (stdDev - firstInBestHist.StdDev) > StdDevMaxDif))
+                {
+                    GenHistory<T> gHist = new GenHistory<T>(Population[0], avg, stdDev);
+                    BestGensHistory.Add(gHist);
+                }
+                else
+                {
+                    if (HyperMutWasCalled == true )
+                    {
+                        HyperMutations(true); //reset mutation rate factor
+                        Console.WriteLine("Local optima seems to be over at iteration " + (index + 1));
+                    }
+                    BestGensHistory.Clear();
+                }
+            }
+            //if bestGensHistory reached the target size => this is local optima
+            else if (BestGensHistory.Count == BestGensHistoryTargetSize)
+            {
+                if (HyperMutWasCalled != true)
+                {
+                    Console.WriteLine("Local optima was discoverd after " + (index + 1) + " iterations ");
+                    HyperMutations(); // local optima rescue     
+                }
+                BestGensHistory.RemoveAt(BestGensHistory.Count-1);
+                HyperMutWasCalled = true;
+            }
+            //if bestGensHistory is empty add the first gen
+            else
+            {
+                GenHistory<T> gHist = new GenHistory<T>(Population[0], avg, stdDev);
+                BestGensHistory.Add(gHist);
+            }
         }
 
         protected abstract void calc_fitness();
@@ -178,7 +201,8 @@ namespace Genetics.GeneticsAlgorithms
                 {
                     j++;
                     Population[j].Age++;
-                    if (Population[j].Age > AgeThreshold) Population[j] = get_new_gen();
+                    if (Population[j].Age > AgeThreshold)
+                        Population[j] = get_new_gen();
                     else stop = true;
                 } while (stop == false && j <GaPopSize);
                 Buffer[i] = Population[j];
@@ -222,24 +246,36 @@ namespace Genetics.GeneticsAlgorithms
         protected void SelectionByRwsSus(int esize)
         {
             uint totalFit = 0;
-            for (int i = esize; i < GaPopSize; i++)
+            for (int i = 0; i < GaPopSize; i++)
             {
                 totalFit += (MaxFitness - Population[i].Fitness);
             }
-            List<int> rWheel = BuildRouletteWheel(esize, totalFit);
-            int n = (GaPopSize - esize)*2;
-            int p = (int)totalFit / n;
-
-            int start = Rand.Next() % p;  //starting index is randomly selected
-            
-            for (int i = esize; i < GaPopSize; i++)  // loop over population and jump at totalFit / n in every iteration
+            List<int> rWheel = BuildRouletteWheel(totalFit);
+            int n = (GaPopSize)*2; 
+            int p = (int)totalFit / n; // p is used to advance the index over the wheel
+            int index = Rand.Next() % p;  //starting index is randomly selected by the size of p            
+            for (int i = esize; i < GaPopSize; i++)  // loop over population and advance index by 2*p in every iteration
             {
-                int i1 = rWheel[start];
-                int i2 = rWheel[start + p];
+                int i1 = rWheel[index];
+                int i2 = rWheel[index + p];
                 mate_by_method(Buffer[i], Population[i1], Population[i2]);
                 if (Rand.Next() < GaMutation* GaMutationFactor) Mutate(Buffer[i]);
-                start += 2 * p;
+                index += 2 * p;
             }
+        }
+        protected List<int> BuildRouletteWheel(uint totalFit)
+        {
+            List<int> rWheel = new List<int>();           
+            for (int j = 0; j < GaPopSize; j++)
+            {
+                float genSlicePercent = (float)(MaxFitness - Population[j].Fitness) / totalFit;
+                long genSliceSize = (long)Math.Round(genSlicePercent * totalFit);
+                for (int i = 0; i < genSliceSize; i++)
+                {
+                    rWheel.Add(j);
+                }
+            }
+            return rWheel;
         }
         protected void SelectionByTruncation(int eSize)
         {
@@ -283,27 +319,11 @@ namespace Genetics.GeneticsAlgorithms
             }
         }        
        
-        protected List<int> BuildRouletteWheel(int eSize, uint totalFit)
-        {
-            List<int> rWheel = new List<int>();
-           
-            for (int j = eSize; j < GaPopSize; j++)
-            {
-                float genSlicePercent = (float)(MaxFitness - Population[j].Fitness) / totalFit;
-                int genSliceSize = (int)Math.Round(genSlicePercent * totalFit);
-                for (int i = 0; i < genSliceSize; i++)
-                {
-                    rWheel.Add(j);
-                }
-            }
-            return rWheel;
-        }
-
         protected abstract void mate_by_method(T bufGen, T gen1, T gen2);
-        protected void print_result_details(T bestGen, double avg, double stdDev)
+        protected void print_result_details(T bestGen, double avg, double stdDev, int iteration)
         {
             Tuple<string, uint> bestGenDetails = get_best_gen_details(bestGen);
-            Console.WriteLine("Best: " + bestGenDetails.Item1 + " (" + bestGenDetails.Item2 + ")" +
+            Console.WriteLine("#"+(iteration+1) +" Best: " + bestGenDetails.Item1 + " (" + bestGenDetails.Item2 + ")" +
                 ", Average: " + string.Format("{0:N2}", avg) +
                 ", Standard Deviation: " + string.Format("{0:N2}", stdDev));
         }
@@ -363,12 +383,10 @@ namespace Genetics.GeneticsAlgorithms
 
         protected void SearchAlpha()
         {
-            //int speciesCount;
             HashSet<int> uniqueSpecies = new HashSet<int>();
             bool stop = false;
             do
             {
-                //speciesCount = 0;
                 uniqueSpecies.Clear();
                 var speciationThreshold = Alpha;
                 for (int i = 0; i < GaPopSize; i++)
@@ -379,7 +397,6 @@ namespace Genetics.GeneticsAlgorithms
                         if (result > speciationThreshold)
                         {
                             uniqueSpecies.Add(result);
-                            //speciesCount++;
                             if (uniqueSpecies.Count > Beta)
                             {
                                 stop = true;

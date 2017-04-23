@@ -43,6 +43,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaldwinEffect\BaldwinEffect.cs" />
+    <Compile Include="BaldwinEffect\BinaryGen.cs" />
     <Compile Include="BinPacking\BinPackingAlgorithm.cs" />
     <Compile Include="BinPacking\BinPackingGenetics.cs" />
     <Compile Include="GeneticsAlgorithms\Gen.cs" />

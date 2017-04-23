@@ -28,8 +28,9 @@ namespace Genetics.BinPacking
             {
                 volumesString += vol + " ";
             }
-            Console.WriteLine("Lower bound is  "+ _lowerBound + " bins for container sized "+_containerSize);
-            Console.WriteLine("Result "+Bins.Count+" bins");
+            Console.WriteLine("Container size: "+_containerSize);
+            Console.WriteLine("Lower bound: "+ _lowerBound);
+            Console.WriteLine("Result: "+Bins.Count+" bins");
             int i = 0;
             foreach (var bin in Bins)
             {

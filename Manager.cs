@@ -40,10 +40,27 @@ namespace Genetics
                     case 5:
                         run_bin_packing_first_fit();
                         break;
-                    default:
+                    case 6:
+                        run_baldwin();
+                        break;
+                default:
                         Console.WriteLine("please enter a number between 1 to 5");
                         break;
                 }
+        }
+
+        private void run_baldwin()
+        {
+            choose_crossover_method(false);
+            set_selection_method();
+
+            BaldwinEffect.BaldwinEffect be = new BaldwinEffect.BaldwinEffect(_crossoverMethod,_selectionMethod);
+            do
+            {
+                be.init_population();
+                be.run_algorithm();
+                Console.WriteLine("press any key to run again or escapse to exit");
+            } while (Console.ReadKey(true).Key != ConsoleKey.Escape);
         }
 
         private void print_options()
@@ -54,6 +71,7 @@ namespace Genetics
             Console.WriteLine("3.N-Queens using Minimal Conflits");
             Console.WriteLine("4.Bin Packing using Genetics Algorithms");
             Console.WriteLine("5.Bin Packing - First Fit");
+            Console.WriteLine("6.Baldwin - Not finished");
         }
         private void run_string_search()
         {

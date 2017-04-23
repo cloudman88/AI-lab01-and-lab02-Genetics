@@ -26,49 +26,7 @@ namespace Genetics.StringSearch
             MaxFitness = (uint)(90*StrTarget.Length);
             Alpha = (int)MaxFitness/2;
         }
-
-        //public override void run_algorithm()
-        //{
-        //    Stopwatch sp = new Stopwatch();  //used to calculate total run time
-        //    sp.Start();
-        //    int totalIteration = -1;
-        //    for (int i = 0; i < GaMaxiter; i++)
-        //    {
-        //        DateTime start = DateTime.Now; //used to calculate run time of every generation (=iteration)
-        //        DateTime end;
-        //        if (_isBonus == true) calc_fitness_with_bonus(); // calculate fitness with bonuses
-        //        else    calc_fitness();      // calculate fitness
-        //        sort_by_fitness();   // sort them
-        //        var avg = calc_avg(); // calc avg
-        //        var stdDev = calc_std_dev(avg); //calc std dev
-        //        print_result_details(population[0], avg, stdDev);  // print the best one, average and std dev
-        //        long elapsedTicks = 0;
-        //        if ((population)[0].Fitness == 0)
-        //        {
-        //            totalIteration = i; // save number of iteration
-        //            end = DateTime.Now;
-        //            elapsedTicks = end.Ticks - start.Ticks;
-        //            Console.WriteLine("Iteration " + (i + 1) + ": Clock Ticks: " + elapsedTicks / TimeSpan.TicksPerMillisecond);
-        //            break;
-        //        }
-        //        Mate();     // mate the population together
-        //        swap_population_with_buffer();       // swap buffers
-        //        end = DateTime.Now;
-        //        elapsedTicks = end.Ticks - start.Ticks;
-        //        Console.WriteLine("Iteration " + (i + 1) + " Clock Ticks: " + elapsedTicks / TimeSpan.TicksPerMillisecond);
-        //    }
-        //    sp.Stop();
-        //    if (totalIteration == -1)
-        //    {
-        //        Console.WriteLine("Failed to find solution in " + GaMaxiter + " iterations.");
-        //    }
-        //    else
-        //    {
-        //        Console.WriteLine("Iterations: " + totalIteration);
-        //    }
-        //    Console.WriteLine("Absolute RunTime : " + sp.ElapsedMilliseconds);
-
-        //}
+        
         public override void init_population()
         {
             int targetLength = StrTarget.Length;
@@ -236,26 +194,9 @@ namespace Genetics.StringSearch
             return new StringGen(Rand,StrTarget.Length);
         }
 
-
         protected override int calc_distance(StringGen strGen1, StringGen strGen2)
         {
             //Levenshtein distance
-            //int distance = 0;
-            //for (int i = 0; i < StrTarget.Length; i++)
-            //{
-            //    var stringGen1 = strGen1 as StringGen;
-            //    var stringGen2 = strGen2 as StringGen;
-            //    if (stringGen1 != null && stringGen2 != null)
-            //    {
-            //        if (stringGen1.Str[i] != stringGen2.Str[i]) distance++;                    
-            //    }
-            //    else
-            //    {
-            //        throw new NullReferenceException();
-            //    }
-            //}
-            //return distance;
-
             int[,] distances = new int[StrTarget.Length+1,StrTarget.Length+1];
             string str1 = strGen1.Str;
             string str2 = strGen2.Str;
@@ -276,6 +217,5 @@ namespace Genetics.StringSearch
             }                
             return distances[StrTarget.Length, StrTarget.Length];
         }
-
     }
 }
