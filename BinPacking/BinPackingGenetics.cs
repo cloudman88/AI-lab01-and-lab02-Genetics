@@ -393,8 +393,8 @@ namespace Genetics.BinPacking
             {
                 for (int j = i + 1; j < _volumes.Count; j++)
                 {
-                    if ((volumes1[i] < volumes2[j] && volumes1[i] > volumes2[j]) ||
-                        (volumes1[i] > volumes2[j] && volumes1[i] < volumes2[j])) distance++;
+                    if ((volumes1[i] < volumes1[j] && volumes2[i] > volumes2[j]) ||
+                        (volumes1[i] > volumes1[j] && volumes2[i] < volumes2[j])) distance++;
                 }
             }
             return distance;
